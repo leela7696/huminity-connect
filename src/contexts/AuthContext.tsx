@@ -11,6 +11,17 @@ interface Profile {
   department?: string;
   position?: string;
   avatar_url?: string;
+  phone?: string;
+  date_of_birth?: string;
+  address?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  bank_account_number?: string;
+  bank_routing_number?: string;
+  is_active: boolean;
+  last_login?: string;
+  mfa_enabled: boolean;
+  mfa_secret?: string;
   created_at: string;
   updated_at: string;
 }

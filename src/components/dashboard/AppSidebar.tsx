@@ -33,11 +33,11 @@ const getMenuItemsForRole = (role: string) => {
     case 'admin':
       return [
         ...baseItems,
+        { title: "User Management", url: "/dashboard/users", icon: UserCheck },
         { title: "Employee Management", url: "/dashboard/employees", icon: Users },
         { title: "Leave Management", url: "/dashboard/leave", icon: Calendar },
         { title: "Payroll & Benefits", url: "/dashboard/payroll", icon: DollarSign },
         { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
-        { title: "User Management", url: "/dashboard/users", icon: UserCheck },
         { title: "Audit Logs", url: "/dashboard/audit", icon: FileText },
         { title: "Settings", url: "/dashboard/settings", icon: Settings }
       ];
@@ -47,7 +47,8 @@ const getMenuItemsForRole = (role: string) => {
         { title: "Employee Management", url: "/dashboard/employees", icon: Users },
         { title: "Leave Management", url: "/dashboard/leave", icon: Calendar },
         { title: "Payroll & Benefits", url: "/dashboard/payroll", icon: DollarSign },
-        { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 }
+        { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
+        { title: "User Management", url: "/dashboard/users", icon: UserCheck }
       ];
     case 'manager':
       return [
