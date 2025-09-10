@@ -50,10 +50,10 @@ export const useAuditLogs = (filters: AuditLogFilters = {}) => {
         if (filters.user_id) {
           query = query.eq('user_id', filters.user_id);
         }
-        if (filters.action) {
+        if (filters.action && filters.action !== 'all') {
           query = query.eq('action', filters.action);
         }
-        if (filters.resource_type) {
+        if (filters.resource_type && filters.resource_type !== 'all') {
           query = query.eq('resource_type', filters.resource_type);
         }
         if (filters.date_from) {

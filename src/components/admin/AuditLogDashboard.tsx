@@ -16,8 +16,8 @@ import { format } from 'date-fns';
 export const AuditLogDashboard = () => {
   const { canViewAuditLogs } = usePermissions();
   const [filters, setFilters] = useState({
-    action: '',
-    resource_type: '',
+    action: 'all',
+    resource_type: 'all',
     date_from: '',
     date_to: ''
   });
@@ -30,8 +30,8 @@ export const AuditLogDashboard = () => {
 
   const clearFilters = () => {
     setFilters({
-      action: '',
-      resource_type: '',
+      action: 'all',
+      resource_type: 'all',
       date_from: '',
       date_to: ''
     });
@@ -141,7 +141,7 @@ export const AuditLogDashboard = () => {
                   <SelectValue placeholder="All actions" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All actions</SelectItem>
+                  <SelectItem value="all">All actions</SelectItem>
                   <SelectItem value="CREATE">Create</SelectItem>
                   <SelectItem value="UPDATE">Update</SelectItem>
                   <SelectItem value="DELETE">Delete</SelectItem>
@@ -157,7 +157,7 @@ export const AuditLogDashboard = () => {
                   <SelectValue placeholder="All resources" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All resources</SelectItem>
+                  <SelectItem value="all">All resources</SelectItem>
                   <SelectItem value="user">User</SelectItem>
                   <SelectItem value="profile">Profile</SelectItem>
                   <SelectItem value="employee">Employee</SelectItem>
