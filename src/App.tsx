@@ -8,6 +8,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { AuditLogDashboard } from "@/components/admin/AuditLogDashboard";
 import { EnhancedProfile } from "@/components/profile/EnhancedProfile";
+import { EmployeeDirectory } from "@/components/employees/EmployeeDirectory";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -43,6 +44,11 @@ const App = () => (
             <Route path="/dashboard/profile" element={
               <DashboardLayout>
                 <EnhancedProfile />
+              </DashboardLayout>
+            } />
+            <Route path="/dashboard/employees" element={
+              <DashboardLayout>
+                <EmployeeDirectory />
               </DashboardLayout>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
