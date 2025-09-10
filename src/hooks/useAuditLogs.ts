@@ -39,7 +39,7 @@ export const useAuditLogs = (filters: AuditLogFilters = {}) => {
           .from('audit_logs')
           .select(`
             *,
-            profiles!audit_logs_user_id_fkey (
+            profiles!inner(
               full_name,
               role
             )
