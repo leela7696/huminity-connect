@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEmployees } from '@/hooks/useEmployees';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +56,6 @@ interface EmployeeFormProps {
 export const EmployeeForm = ({ onSuccess }: EmployeeFormProps) => {
   const [loading, setLoading] = useState(false);
   const [managers, setManagers] = useState<Array<{ id: string; full_name: string }>>([]);
-  const { createEmployee } = useEmployees();
   const { toast } = useToast();
 
   const form = useForm<EmployeeFormData>({
@@ -87,56 +85,29 @@ export const EmployeeForm = ({ onSuccess }: EmployeeFormProps) => {
     try {
       setLoading(true);
 
-      // Step 1: Create user account
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: data.email,
-        password: 'TempPassword123!', // Temporary password - user should change this
-        email_confirm: true,
-        user_metadata: {
+      // Call the edge function to create the employee
+      const { data: result, error } = await supabase.functions.invoke('create-employee', {
+        body: {
+          email: data.email,
           full_name: data.full_name,
-          role: data.role
+          role: data.role,
+          employee_id: data.employee_id,
+          job_title: data.job_title,
+          department: data.department,
+          hire_date: data.hire_date,
+          phone: data.phone,
+          address: data.address,
+          date_of_birth: data.date_of_birth,
+          work_location: data.work_location,
+          employment_type: data.employment_type,
+          salary: data.salary,
+          benefits_eligible: data.benefits_eligible,
+          manager_id: data.manager_id,
         }
       });
 
-      if (authError) throw authError;
-
-      // Step 2: Update profile with additional information
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          full_name: data.full_name,
-          department: data.department,
-          position: data.job_title,
-          phone: data.phone,
-          address: data.address,
-          date_of_birth: data.date_of_birth || null,
-          role: data.role
-        })
-        .eq('user_id', authData.user.id);
-
-      if (profileError) throw profileError;
-
-      // Step 3: Get the profile ID
-      const { data: profileData, error: profileFetchError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('user_id', authData.user.id)
-        .single();
-
-      if (profileFetchError) throw profileFetchError;
-
-      // Step 4: Create employee record
-      await createEmployee({
-        employee_id: data.employee_id,
-        profile_id: profileData.id,
-        job_title: data.job_title,
-        hire_date: data.hire_date,
-        salary: data.salary ? parseFloat(data.salary) : undefined,
-        manager_id: data.manager_id || undefined,
-        work_location: data.work_location,
-        employment_type: data.employment_type,
-        benefits_eligible: data.benefits_eligible,
-      });
+      if (error) throw error;
+      if (result.error) throw new Error(result.error);
 
       toast({
         title: "Employee Created",
