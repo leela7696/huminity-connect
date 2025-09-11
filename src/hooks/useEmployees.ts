@@ -57,7 +57,7 @@ export const useEmployees = (filters: EmployeeFilters = {}) => {
         .from('employees')
         .select(`
           *,
-          profiles!inner(
+          profiles!employees_profile_id_fkey(
             id,
             full_name,
             role,
