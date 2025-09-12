@@ -46,23 +46,38 @@ serve(async (req) => {
       )
     }
 
-    // Create user account with admin privileges
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: email,
-      password: 'TempPassword123!', // Temporary password
-      email_confirm: true,
-      user_metadata: {
-        full_name: full_name,
-        role: role || 'employee'
-      }
+    // Check if user already exists
+    let authData
+    const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000
     })
+    
+    const userExists = existingUser?.users?.find(user => user.email === email)
+    
+    if (userExists) {
+      // Use existing user
+      authData = { user: userExists }
+    } else {
+      // Create new user account
+      const { data: newUserData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        email: email,
+        password: 'TempPassword123!', // Temporary password
+        email_confirm: true,
+        user_metadata: {
+          full_name: full_name,
+          role: role || 'employee'
+        }
+      })
 
-    if (authError) {
-      console.error('Auth error:', authError)
-      return new Response(
-        JSON.stringify({ error: authError.message }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      if (authError) {
+        console.error('Auth error:', authError)
+        return new Response(
+          JSON.stringify({ error: authError.message }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+      authData = newUserData
     }
 
     // Update the profile that was created by the trigger
