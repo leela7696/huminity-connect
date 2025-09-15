@@ -3,6 +3,8 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { EmployeeDirectory } from '@/components/employees/EmployeeDirectory';
 import { EmployeeProfile } from '@/components/employees/EmployeeProfile';
 import { EnhancedProfile } from '@/components/profile/EnhancedProfile';
+import { UserManagement } from '@/components/admin/UserManagement';
+import { AuditLogDashboard } from '@/components/admin/AuditLogDashboard';
 import OnboardingDashboard from '@/components/onboarding/OnboardingDashboard';
 import EmployeeOnboarding from '@/components/onboarding/EmployeeOnboarding';
 import OnboardingTemplates from '@/components/onboarding/OnboardingTemplates';
@@ -22,6 +24,8 @@ export default function Dashboard() {
         <Route path="employees" element={<EmployeeDirectory />} />
         <Route path="employees/:id" element={<EmployeeProfileWrapper />} />
         <Route path="profile" element={<EnhancedProfile />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="audit" element={<AuditLogDashboard />} />
         <Route path="onboarding" element={<OnboardingDashboard />} />
         <Route path="onboarding/templates" element={<OnboardingTemplates />} />
         <Route path="onboarding/bulk" element={<BulkOnboarding />} />
