@@ -9,11 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, CalendarIcon, Users, CheckCircle2, Clock, AlertTriangle, Plus, Edit, Trash2 } from 'lucide-react';
+import { Calendar, CalendarIcon, Users, CheckCircle2, Clock, AlertTriangle, Plus, Edit, Trash2, FileText, UsersRound } from 'lucide-react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useEmployees } from '@/hooks/useEmployees';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 export default function OnboardingDashboard() {
   const { tasks, stats, loading, completeTask, addTask, updateTask, deleteTask } = useOnboarding();
@@ -87,13 +88,26 @@ export default function OnboardingDashboard() {
           <p className="text-muted-foreground">Manage employee onboarding tasks and progress</p>
         </div>
         
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Task
+        <div className="flex gap-2">
+          <Link to="/dashboard/onboarding/templates">
+            <Button variant="outline">
+              <FileText className="w-4 h-4 mr-2" />
+              Templates
             </Button>
-          </DialogTrigger>
+          </Link>
+          <Link to="/dashboard/onboarding/bulk">
+            <Button variant="outline">
+              <UsersRound className="w-4 h-4 mr-2" />
+              Bulk Onboarding
+            </Button>
+          </Link>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Task
+              </Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Onboarding Task</DialogTitle>
@@ -174,6 +188,7 @@ export default function OnboardingDashboard() {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -330,7 +345,68 @@ export default function OnboardingDashboard() {
           <div className="grid gap-4">
             {tasks.filter(task => !task.is_completed).map((task) => (
               <Card key={task.id}>
-                {/* ... similar content as above ... */}
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">{task.task_name}</CardTitle>
+                      <CardDescription>
+                        Employee: {task.employee?.profiles?.full_name} ({task.employee?.employee_id})
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Badge variant={getPriorityColor(task.priority)}>
+                        {task.priority}
+                      </Badge>
+                      <Badge variant={getStatusColor(task)}>
+                        {task.due_date && new Date(task.due_date) < new Date() ? 'Overdue' : 'Pending'}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {task.task_description && (
+                      <p className="text-sm text-muted-foreground">{task.task_description}</p>
+                    )}
+                    <div className="flex justify-between items-center text-sm">
+                      <span>Assigned to: {task.assigned_to}</span>
+                      {task.due_date && (
+                        <span className={cn(
+                          "flex items-center gap-1",
+                          new Date(task.due_date) < new Date() ? "text-destructive" : ""
+                        )}>
+                          <Clock className="w-3 h-3" />
+                          Due: {format(new Date(task.due_date), 'MMM dd, yyyy')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingTask(task)}
+                    >
+                      <Edit className="w-3 h-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Delete
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => completeTask(task.id)}
+                    >
+                      <CheckCircle2 className="w-3 h-3 mr-1" />
+                      Mark Complete
+                    </Button>
+                  </div>
+                </CardContent>
               </Card>
             ))}
           </div>
@@ -339,8 +415,65 @@ export default function OnboardingDashboard() {
         <TabsContent value="completed" className="space-y-4">
           <div className="grid gap-4">
             {tasks.filter(task => task.is_completed).map((task) => (
-              <Card key={task.id}>
-                {/* ... similar content as above ... */}
+              <Card key={task.id} className="bg-muted/50">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg line-through text-muted-foreground">{task.task_name}</CardTitle>
+                      <CardDescription>
+                        Employee: {task.employee?.profiles?.full_name} ({task.employee?.employee_id})
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Badge variant={getPriorityColor(task.priority)}>
+                        {task.priority}
+                      </Badge>
+                      <Badge variant="default">
+                        Completed
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {task.task_description && (
+                      <p className="text-sm text-muted-foreground">{task.task_description}</p>
+                    )}
+                    <div className="flex justify-between items-center text-sm">
+                      <span>Assigned to: {task.assigned_to}</span>
+                      {task.due_date && (
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          Due: {format(new Date(task.due_date), 'MMM dd, yyyy')}
+                        </span>
+                      )}
+                    </div>
+                    {task.completed_by_profile && (
+                      <p className="text-sm text-muted-foreground">
+                        Completed by {task.completed_by_profile.full_name} on{' '}
+                        {task.completed_at && format(new Date(task.completed_at), 'MMM dd, yyyy')}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingTask(task)}
+                    >
+                      <Edit className="w-3 h-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Delete
+                    </Button>
+                  </div>
+                </CardContent>
               </Card>
             ))}
           </div>
@@ -353,8 +486,66 @@ export default function OnboardingDashboard() {
               task.due_date && 
               new Date(task.due_date) < new Date()
             ).map((task) => (
-              <Card key={task.id}>
-                {/* ... similar content as above ... */}
+              <Card key={task.id} className="border-destructive">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">{task.task_name}</CardTitle>
+                      <CardDescription>
+                        Employee: {task.employee?.profiles?.full_name} ({task.employee?.employee_id})
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Badge variant={getPriorityColor(task.priority)}>
+                        {task.priority}
+                      </Badge>
+                      <Badge variant="destructive">
+                        Overdue
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {task.task_description && (
+                      <p className="text-sm text-muted-foreground">{task.task_description}</p>
+                    )}
+                    <div className="flex justify-between items-center text-sm">
+                      <span>Assigned to: {task.assigned_to}</span>
+                      {task.due_date && (
+                        <span className="flex items-center gap-1 text-destructive">
+                          <Clock className="w-3 h-3" />
+                          Due: {format(new Date(task.due_date), 'MMM dd, yyyy')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingTask(task)}
+                    >
+                      <Edit className="w-3 h-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Delete
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => completeTask(task.id)}
+                    >
+                      <CheckCircle2 className="w-3 h-3 mr-1" />
+                      Mark Complete
+                    </Button>
+                  </div>
+                </CardContent>
               </Card>
             ))}
           </div>

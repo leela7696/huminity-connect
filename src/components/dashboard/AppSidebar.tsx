@@ -21,7 +21,9 @@ import {
   UserCheck,
   Clock,
   Shield,
-  Home
+  Home,
+  ClipboardList,
+  UsersRound
 } from "lucide-react";
 
 const getMenuItemsForRole = (role: string) => {
@@ -36,6 +38,8 @@ const getMenuItemsForRole = (role: string) => {
         { title: "User Management", url: "/dashboard/users", icon: UserCheck },
         { title: "Employee Management", url: "/dashboard/employees", icon: Users },
         { title: "Onboarding Management", url: "/dashboard/onboarding", icon: UserCheck },
+        { title: "Onboarding Templates", url: "/dashboard/onboarding/templates", icon: ClipboardList },
+        { title: "Bulk Onboarding", url: "/dashboard/onboarding/bulk", icon: UsersRound },
         { title: "Leave Management", url: "/dashboard/leave", icon: Calendar },
         { title: "Payroll & Benefits", url: "/dashboard/payroll", icon: DollarSign },
         { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
@@ -47,6 +51,8 @@ const getMenuItemsForRole = (role: string) => {
           ...baseItems,
           { title: "Employee Management", url: "/dashboard/employees", icon: Users },
           { title: "Onboarding Management", url: "/dashboard/onboarding", icon: UserCheck },
+          { title: "Onboarding Templates", url: "/dashboard/onboarding/templates", icon: ClipboardList },
+          { title: "Bulk Onboarding", url: "/dashboard/onboarding/bulk", icon: UsersRound },
           { title: "Leave Management", url: "/dashboard/leave", icon: Calendar },
           { title: "Payroll & Benefits", url: "/dashboard/payroll", icon: DollarSign },
           { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 }
