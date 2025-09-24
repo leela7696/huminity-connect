@@ -130,27 +130,12 @@ export const EmployeeManagement = () => {
 
   const handleCreateEmployee = async (employeeData: EmployeeFormData) => {
     try {
-      // Generate a temporary user_id that will be replaced when employee registers
-      const tempUserId = crypto.randomUUID();
-      
-      // Create profile first
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .insert([{
-          user_id: tempUserId,
-          full_name: employeeData.full_name,
-          role: 'employee'
-        }])
-        .select()
-        .single();
-
-      if (profileError) throw profileError;
-
+      // For now, create employee without profile (profile will be created when user registers)
       const { data, error } = await supabase
         .from('employees')
         .insert([{
           employee_id: employeeData.employee_id,
-          profile_id: profileData.id,
+          profile_id: null, // Will be set later when user registers
           job_title: employeeData.job_title,
           department: employeeData.department,
           hire_date: employeeData.hire_date,
