@@ -298,7 +298,7 @@ export type Database = {
           id: string
           job_title: string | null
           manager_id: string | null
-          profile_id: string
+          profile_id: string | null
           salary: number | null
           status: string | null
           termination_date: string | null
@@ -315,7 +315,7 @@ export type Database = {
           id?: string
           job_title?: string | null
           manager_id?: string | null
-          profile_id: string
+          profile_id?: string | null
           salary?: number | null
           status?: string | null
           termination_date?: string | null
@@ -332,7 +332,7 @@ export type Database = {
           id?: string
           job_title?: string | null
           manager_id?: string | null
-          profile_id?: string
+          profile_id?: string | null
           salary?: number | null
           status?: string | null
           termination_date?: string | null

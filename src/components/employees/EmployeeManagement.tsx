@@ -18,7 +18,7 @@ import { Users, UserPlus, Edit, Trash2, Search, Calendar, Building, MapPin } fro
 interface Employee {
   id: string;
   employee_id: string;
-  profile_id: string;
+  profile_id: string | null;
   job_title: string;
   department?: string;
   hire_date: string;
@@ -151,7 +151,14 @@ export const EmployeeManagement = () => {
 
       if (error) throw error;
 
-      await logEvent('CREATE', 'employee', data.id, null, employeeData);
+      // Store employee name and other details for future profile creation
+      // For now, we'll store the full name in a temporary way
+      const employeeData_extended = {
+        ...employeeData,
+        temp_full_name: employeeData.full_name // Store for when profile is created
+      };
+
+      await logEvent('CREATE', 'employee', data.id, null, employeeData_extended);
       
       // Create notification
       if (profile?.user_id) {
@@ -165,7 +172,7 @@ export const EmployeeManagement = () => {
       
       toast({
         title: 'Success',
-        description: 'Employee created successfully'
+        description: `Employee ${employeeData.employee_id} created successfully. They can register later to complete their profile.`
       });
       
       setIsCreateDialogOpen(false);
@@ -252,7 +259,7 @@ export const EmployeeManagement = () => {
   };
 
   const filteredEmployees = employees.filter(employee => {
-    const matchesSearch = employee.profiles?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch = (employee.profiles?.full_name || employee.employee_id).toLowerCase().includes(searchQuery.toLowerCase()) ||
                          employee.employee_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          employee.job_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          employee.department?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -365,24 +372,32 @@ export const EmployeeManagement = () => {
             </TableHeader>
             <TableBody>
               {filteredEmployees.map((employee) => (
-                <TableRow key={employee.id} className="border-border/50 hover:bg-muted/30">
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <Avatar>
-                        <AvatarImage src={employee.profiles?.avatar_url} />
-                        <AvatarFallback className="bg-primary/10">
-                          {employee.profiles?.full_name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold text-foreground">{employee.profiles?.full_name}</p>
-                        <p className="text-sm text-muted-foreground flex items-center">
-                          <Building className="h-3 w-3 mr-1" />
-                          {employee.job_title}
-                        </p>
-                      </div>
+              <TableRow key={employee.id} className="border-border/50 hover:bg-muted/30">
+                <TableCell>
+                  <div className="flex items-center space-x-3">
+                    <Avatar>
+                      <AvatarImage src={employee.profiles?.avatar_url} />
+                      <AvatarFallback className="bg-primary/10">
+                        {employee.profiles?.full_name 
+                          ? employee.profiles.full_name.split(' ').map(n => n[0]).join('')
+                          : employee.employee_id.slice(0, 2).toUpperCase()
+                        }
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold text-foreground">
+                        {employee.profiles?.full_name || `Employee ${employee.employee_id}`}
+                      </p>
+                      <p className="text-sm text-muted-foreground flex items-center">
+                        <Building className="h-3 w-3 mr-1" />
+                        {employee.job_title}
+                      </p>
+                      {!employee.profiles && (
+                        <p className="text-xs text-amber-600">Profile pending registration</p>
+                      )}
                     </div>
-                  </TableCell>
+                  </div>
+                </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="font-mono">
                       {employee.employee_id}
