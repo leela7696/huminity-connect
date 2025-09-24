@@ -7,6 +7,9 @@ import { EmployeeManagement } from '@/components/employees/EmployeeManagement';
 import { AuditLogDashboard } from '@/components/admin/AuditLogDashboard';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import { EnhancedProfile } from '@/components/profile/EnhancedProfile';
+import { OnboardingDetailsForm } from '@/components/onboarding/OnboardingDetailsForm';
+import { EmployeeOnboardingDashboard } from '@/components/onboarding/EmployeeOnboardingDashboard';
+import { HROnboardingDashboard } from '@/components/onboarding/HROnboardingDashboard';
 
 const Dashboard = () => {
   const { profile } = useAuth();
@@ -24,6 +27,10 @@ const Dashboard = () => {
         <Route path="/audit" element={<AuditLogDashboard />} />
         <Route path="/notifications" element={<NotificationCenter />} />
         <Route path="/profile" element={<EnhancedProfile />} />
+        <Route path="/onboarding" element={
+          profile?.role === 'employee' ? <EmployeeOnboardingDashboard /> : <HROnboardingDashboard />
+        } />
+        <Route path="/onboarding/form" element={<OnboardingDetailsForm />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>

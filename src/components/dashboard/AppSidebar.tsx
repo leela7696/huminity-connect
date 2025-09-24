@@ -35,6 +35,7 @@ const getMenuItemsForRole = (role: string) => {
         ...baseItems,
         { title: "User Management", url: "/dashboard/users", icon: UserCheck },
         { title: "Employee Management", url: "/dashboard/employees", icon: Users },
+        { title: "Onboarding", url: "/dashboard/onboarding", icon: UserCheck },
         { title: "Leave Management", url: "/dashboard/leave", icon: Calendar },
         { title: "Payroll & Benefits", url: "/dashboard/payroll", icon: DollarSign },
         { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
@@ -45,6 +46,7 @@ const getMenuItemsForRole = (role: string) => {
       return [
         ...baseItems,
         { title: "Employee Management", url: "/dashboard/employees", icon: Users },
+        { title: "Onboarding", url: "/dashboard/onboarding", icon: UserCheck },
         { title: "Leave Management", url: "/dashboard/leave", icon: Calendar },
         { title: "Payroll & Benefits", url: "/dashboard/payroll", icon: DollarSign },
         { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
@@ -61,6 +63,7 @@ const getMenuItemsForRole = (role: string) => {
     default:
       return [
         ...baseItems,
+        { title: "My Onboarding", url: "/dashboard/onboarding", icon: UserCheck },
         { title: "My Profile", url: "/dashboard/profile", icon: Users },
         { title: "My Requests", url: "/dashboard/my-requests", icon: FileText },
         { title: "My Tickets", url: "/dashboard/my-tickets", icon: Clock }
