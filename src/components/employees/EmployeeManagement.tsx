@@ -48,6 +48,7 @@ interface Employee {
 
 interface EmployeeFormData {
   employee_id: string;
+  full_name: string;
   job_title: string;
   department?: string;
   hire_date: string;
@@ -57,7 +58,6 @@ interface EmployeeFormData {
   status: string;
   manager_id?: string;
   benefits_eligible: boolean;
-  full_name?: string;
   phone?: string;
   profile_id?: string;
 }
@@ -130,24 +130,27 @@ export const EmployeeManagement = () => {
 
   const handleCreateEmployee = async (employeeData: EmployeeFormData) => {
     try {
-      // Create or get profile first
-      let profileId = employeeData.profile_id;
+      // Generate a temporary user_id that will be replaced when employee registers
+      const tempUserId = crypto.randomUUID();
       
-      if (!profileId) {
-        // Create new profile if needed (this would need auth user creation)
-        toast({
-          title: 'Info',
-          description: 'Profile creation requires user account setup',
-          variant: 'default'
-        });
-        return;
-      }
+      // Create profile first
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .insert([{
+          user_id: tempUserId,
+          full_name: employeeData.full_name,
+          role: 'employee'
+        }])
+        .select()
+        .single();
+
+      if (profileError) throw profileError;
 
       const { data, error } = await supabase
         .from('employees')
         .insert([{
           employee_id: employeeData.employee_id,
-          profile_id: profileId,
+          profile_id: profileData.id,
           job_title: employeeData.job_title,
           department: employeeData.department,
           hire_date: employeeData.hire_date,
@@ -471,6 +474,7 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
 }) => {
   const [formData, setFormData] = useState<EmployeeFormData>({
     employee_id: '',
+    full_name: '',
     job_title: '',
     department: '',
     hire_date: new Date().toISOString().split('T')[0],
@@ -499,6 +503,19 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
           />
         </div>
         <div>
+          <Label htmlFor="full_name">Full Name</Label>
+          <Input
+            id="full_name"
+            value={formData.full_name}
+            onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+            required
+            placeholder="John Doe"
+          />
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div>
           <Label htmlFor="job_title">Job Title</Label>
           <Input
             id="job_title"
@@ -508,9 +525,6 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
             placeholder="Software Engineer"
           />
         </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="department">Department</Label>
           <Input
@@ -520,6 +534,9 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
             placeholder="Engineering"
           />
         </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="hire_date">Hire Date</Label>
           <Input
@@ -528,6 +545,15 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
             value={formData.hire_date}
             onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
             required
+          />
+        </div>
+        <div>
+          <Label htmlFor="work_location">Work Location</Label>
+          <Input
+            id="work_location"
+            value={formData.work_location}
+            onChange={(e) => setFormData({ ...formData, work_location: e.target.value })}
+            placeholder="New York Office"
           />
         </div>
       </div>
@@ -562,16 +588,6 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
             </SelectContent>
           </Select>
         </div>
-      </div>
-
-      <div>
-        <Label htmlFor="work_location">Work Location</Label>
-        <Input
-          id="work_location"
-          value={formData.work_location}
-          onChange={(e) => setFormData({ ...formData, work_location: e.target.value })}
-          placeholder="New York Office"
-        />
       </div>
 
       <Button type="submit" className="w-full">Create Employee</Button>
