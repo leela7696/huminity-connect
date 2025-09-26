@@ -292,6 +292,7 @@ export type Database = {
         Row: {
           benefits_eligible: boolean | null
           created_at: string
+          email: string | null
           employee_id: string
           employment_type: string | null
           hire_date: string | null
@@ -309,6 +310,7 @@ export type Database = {
         Insert: {
           benefits_eligible?: boolean | null
           created_at?: string
+          email?: string | null
           employee_id: string
           employment_type?: string | null
           hire_date?: string | null
@@ -326,6 +328,7 @@ export type Database = {
         Update: {
           benefits_eligible?: boolean | null
           created_at?: string
+          email?: string | null
           employee_id?: string
           employment_type?: string | null
           hire_date?: string | null

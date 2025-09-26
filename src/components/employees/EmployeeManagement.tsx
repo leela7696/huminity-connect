@@ -49,6 +49,7 @@ interface Employee {
 interface EmployeeFormData {
   employee_id: string;
   full_name: string;
+  email: string;
   job_title: string;
   department?: string;
   hire_date: string;
@@ -136,6 +137,7 @@ export const EmployeeManagement = () => {
         .insert([{
           employee_id: employeeData.employee_id,
           profile_id: null, // Will be set later when user registers
+          email: employeeData.email,
           job_title: employeeData.job_title,
           hire_date: employeeData.hire_date,
           salary: employeeData.salary,
@@ -159,19 +161,48 @@ export const EmployeeManagement = () => {
 
       await logEvent('CREATE', 'employee', data.id, null, employeeData_extended);
       
-      // Create notification
+      // Generate onboarding tasks automatically
+      try {
+        const { error: tasksError } = await supabase.rpc('create_onboarding_tasks_from_template', {
+          p_employee_id: data.id,
+          p_template_id: null // Use default template
+        });
+        
+        if (tasksError) {
+          console.error('Error creating onboarding tasks:', tasksError);
+        }
+      } catch (taskError) {
+        console.error('Error generating onboarding tasks:', taskError);
+      }
+      
+      // Send welcome email to employee
+      try {
+        await supabase.functions.invoke('send-employee-welcome', {
+          body: {
+            email: employeeData.email,
+            name: employeeData.full_name,
+            employee_id: employeeData.employee_id,
+            company_name: 'Your Company' // You can make this configurable
+          }
+        });
+      } catch (emailError) {
+        console.error('Error sending welcome email:', emailError);
+        // Don't fail the employee creation if email fails
+      }
+      
+      // Create notification for HR/Admin
       if (profile?.user_id) {
         await supabase.rpc('create_notification', {
           p_user_id: profile.user_id,
           p_title: 'New Employee Added',
-          p_message: `Employee ${employeeData.employee_id} has been added to the system`,
-          p_type: 'info'
+          p_message: `Employee ${employeeData.employee_id} has been added and welcome email sent`,
+          p_type: 'success'
         });
       }
       
       toast({
         title: 'Success',
-        description: `Employee ${employeeData.employee_id} created successfully. They can register later to complete their profile.`
+        description: `Employee ${employeeData.employee_id} created successfully. Welcome email sent and onboarding tasks generated.`
       });
       
       setIsCreateDialogOpen(false);
@@ -474,6 +505,7 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
   const [formData, setFormData] = useState<EmployeeFormData>({
     employee_id: '',
     full_name: '',
+    email: '',
     job_title: '',
     department: '',
     hire_date: new Date().toISOString().split('T')[0],
@@ -511,6 +543,18 @@ const CreateEmployeeForm = ({ onSubmit, managers }: {
             placeholder="John Doe"
           />
         </div>
+      </div>
+      
+      <div>
+        <Label htmlFor="email">Email Address</Label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          required
+          placeholder="john.doe@company.com"
+        />
       </div>
       
       <div className="grid grid-cols-2 gap-4">
