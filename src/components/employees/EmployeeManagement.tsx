@@ -137,7 +137,6 @@ export const EmployeeManagement = () => {
           employee_id: employeeData.employee_id,
           profile_id: null, // Will be set later when user registers
           job_title: employeeData.job_title,
-          department: employeeData.department,
           hire_date: employeeData.hire_date,
           salary: employeeData.salary,
           employment_type: employeeData.employment_type,
