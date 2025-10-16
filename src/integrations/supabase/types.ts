@@ -756,6 +756,259 @@ export type Database = {
         }
         Relationships: []
       }
+      support_chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          role: Database["public"]["Enums"]["message_sender_role"]
+          session_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role: Database["public"]["Enums"]["message_sender_role"]
+          session_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role?: Database["public"]["Enums"]["message_sender_role"]
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "support_chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_chat_sessions: {
+        Row: {
+          created_at: string
+          escalated_to_ticket: string | null
+          id: string
+          is_active: boolean | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          escalated_to_ticket?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          escalated_to_ticket?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_chat_sessions_escalated_to_ticket_fkey"
+            columns: ["escalated_to_ticket"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_chat_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_faqs: {
+        Row: {
+          answer: string
+          category: Database["public"]["Enums"]["ticket_category"]
+          confidence: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          question: string
+          tags: string[] | null
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          answer: string
+          category: Database["public"]["Enums"]["ticket_category"]
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          question: string
+          tags?: string[] | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          answer?: string
+          category?: Database["public"]["Enums"]["ticket_category"]
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          question?: string
+          tags?: string[] | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_faqs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_ticket_messages: {
+        Row: {
+          attachments: Json | null
+          created_at: string
+          id: string
+          is_internal_note: boolean | null
+          message: string
+          sender_id: string | null
+          sender_role: Database["public"]["Enums"]["message_sender_role"]
+          ticket_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string
+          id?: string
+          is_internal_note?: boolean | null
+          message: string
+          sender_id?: string | null
+          sender_role: Database["public"]["Enums"]["message_sender_role"]
+          ticket_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string
+          id?: string
+          is_internal_note?: boolean | null
+          message?: string
+          sender_id?: string | null
+          sender_role?: Database["public"]["Enums"]["message_sender_role"]
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_ticket_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          assigned_to: string | null
+          category: Database["public"]["Enums"]["ticket_category"]
+          chat_session_id: string | null
+          closed_at: string | null
+          created_at: string
+          created_by: string
+          description: string
+          id: string
+          priority: Database["public"]["Enums"]["ticket_priority"] | null
+          resolved_at: string | null
+          satisfaction_feedback: string | null
+          satisfaction_rating: number | null
+          sla_breach: boolean | null
+          status: Database["public"]["Enums"]["ticket_status"] | null
+          ticket_number: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: Database["public"]["Enums"]["ticket_category"]
+          chat_session_id?: string | null
+          closed_at?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          id?: string
+          priority?: Database["public"]["Enums"]["ticket_priority"] | null
+          resolved_at?: string | null
+          satisfaction_feedback?: string | null
+          satisfaction_rating?: number | null
+          sla_breach?: boolean | null
+          status?: Database["public"]["Enums"]["ticket_status"] | null
+          ticket_number: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: Database["public"]["Enums"]["ticket_category"]
+          chat_session_id?: string | null
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: string
+          priority?: Database["public"]["Enums"]["ticket_priority"] | null
+          resolved_at?: string | null
+          satisfaction_feedback?: string | null
+          satisfaction_rating?: number | null
+          sla_breach?: boolean | null
+          status?: Database["public"]["Enums"]["ticket_status"] | null
+          ticket_number?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_sessions: {
         Row: {
           created_at: string
@@ -811,6 +1064,10 @@ export type Database = {
         Args: { p_employee_id: string; p_template_id?: string }
         Returns: undefined
       }
+      generate_ticket_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -833,6 +1090,18 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "hr" | "manager" | "employee"
+      message_sender_role: "employee" | "hr" | "system" | "bot"
+      ticket_category:
+        | "leave"
+        | "payroll"
+        | "benefits"
+        | "policy"
+        | "documents"
+        | "it_support"
+        | "general"
+        | "other"
+      ticket_priority: "low" | "medium" | "high" | "urgent"
+      ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -961,6 +1230,19 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "hr", "manager", "employee"],
+      message_sender_role: ["employee", "hr", "system", "bot"],
+      ticket_category: [
+        "leave",
+        "payroll",
+        "benefits",
+        "policy",
+        "documents",
+        "it_support",
+        "general",
+        "other",
+      ],
+      ticket_priority: ["low", "medium", "high", "urgent"],
+      ticket_status: ["open", "in_progress", "resolved", "closed"],
     },
   },
 } as const
