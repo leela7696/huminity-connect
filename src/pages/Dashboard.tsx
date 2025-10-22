@@ -10,6 +10,7 @@ import { EnhancedProfile } from '@/components/profile/EnhancedProfile';
 import { OnboardingDetailsForm } from '@/components/onboarding/OnboardingDetailsForm';
 import { EmployeeOnboardingDashboard } from '@/components/onboarding/EmployeeOnboardingDashboard';
 import { HROnboardingDashboard } from '@/components/onboarding/HROnboardingDashboard';
+import AIChat from '@/components/AIChat';
 
 const Dashboard = () => {
   const { profile } = useAuth();
@@ -31,6 +32,7 @@ const Dashboard = () => {
           profile?.role === 'employee' ? <EmployeeOnboardingDashboard /> : <HROnboardingDashboard />
         } />
         <Route path="/onboarding/form" element={<OnboardingDetailsForm />} />
+        <Route path="/ai-chat" element={<AIChat />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>

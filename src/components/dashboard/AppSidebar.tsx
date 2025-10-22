@@ -21,12 +21,14 @@ import {
   UserCheck,
   Clock,
   Shield,
-  Home
+  Home,
+  MessageSquare
 } from "lucide-react";
 
 const getMenuItemsForRole = (role: string) => {
   const baseItems = [
-    { title: "Dashboard", url: "/dashboard", icon: Home }
+    { title: "Dashboard", url: "/dashboard", icon: Home },
+    { title: "AI Chat", url: "/dashboard/ai-chat", icon: MessageSquare }
   ];
 
   switch (role) {
